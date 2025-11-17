@@ -20,7 +20,10 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
           Center(
-            child: Text("Profile Page"),
+            child: Hero(
+              tag: "profilePicture",
+              child: Image.asset("assets/tortue.png"),
+            ),
           ),
           Container(),
         ],

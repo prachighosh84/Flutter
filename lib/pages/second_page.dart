@@ -38,20 +38,30 @@ class _SecondPageState extends State<SecondPage> {
           children: [
             Row(
               children: [
-                Material(
-                  color: Colors.amber,
-                  borderRadius: .circular(500),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ProfilePage()),
-                      );
-                    },
+                Hero(
+                  tag: "profilePicture",
+                  child: Material(
+                    color: Colors.amber,
                     borderRadius: .circular(500),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Icon(Icons.supervisor_account, size: 32),
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfilePage(),
+                          ),
+                        );
+                      },
+                      borderRadius: .circular(500),
+                      child: ClipRRect(
+                        borderRadius: .circular(500),
+                        child: Image.asset(
+                          "assets/tortue.png",
+                          height: MediaQuery.of(context).size.width / 7.5,
+                          width: MediaQuery.of(context).size.width / 7.5,
+                          fit: .cover,
+                        ),
+                      ),
                     ),
                   ),
                 ),
