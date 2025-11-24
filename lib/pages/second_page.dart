@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:m2i_cours_flutter/pages/profile_page.dart';
 import 'package:m2i_cours_flutter/pages/second_page/first_content.dart';
+import 'package:m2i_cours_flutter/pages/second_page/fourth_content.dart';
 import 'package:m2i_cours_flutter/pages/second_page/second_content.dart';
 import 'package:m2i_cours_flutter/pages/second_page/third_content.dart';
 import 'package:m2i_cours_flutter/widgets/navbar/bottom_nav_bar.dart';
@@ -19,6 +20,7 @@ class _SecondPageState extends State<SecondPage> {
     FirstContent(),
     SecondContent(),
     ThirdContent(),
+    FourthContent()
   ];
 
   void changePage(int newIndex) {
@@ -50,6 +52,7 @@ class _SecondPageState extends State<SecondPage> {
                           MaterialPageRoute(
                             builder: (context) => ProfilePage(),
                           ),
+
                         );
                       },
                       borderRadius: .circular(500),

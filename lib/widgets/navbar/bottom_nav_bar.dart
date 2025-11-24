@@ -20,19 +20,17 @@ class BottomNavBar extends StatelessWidget {
             BottomIcon(
               icon: Icons.home,
               text: "Home",
-              color: ColorScheme
-                  .light()
-                  .primary,
               func: () => func(0),
             ),
             BottomIcon(
-              icon: Icons.business,
-              text: "Business",
+              icon: Icons.chat,
+              text: "Chats",
               func: () => func(1),
             ),
+
             BottomIcon(
-              icon: Icons.school,
-              text: "School",
+              icon: Icons.notifications,
+              text: "Channels",
               func: () => func(2),
             ),
           ],
