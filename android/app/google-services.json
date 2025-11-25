@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "853833082660",
+    "project_id": "m2iexcerciseletschat",
+    "storage_bucket": "m2iexcerciseletschat.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:853833082660:android:4d176352f0237d7fa235b1",
+        "android_client_info": {
+          "package_name": "fr.avainfo.m2i_cours_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAH-Yyld0nRpfm04fcuCf_5etJjdeyWRjo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
