@@ -26,13 +26,13 @@ class IconCard extends StatelessWidget {
         elevation: 4,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         margin: const EdgeInsets.all(8),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+        child:Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(icon, size: 48, color: color),
-              const SizedBox(height: 12),
+              Icon(icon, size: 24, color: color),
+              const SizedBox(height: 6),
               Text(
                 title,
                 style: const TextStyle(

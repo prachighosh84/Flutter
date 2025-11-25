@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../services/auth_service.dart';
 
 // Define a custom Form widget.
 class CustomForm extends StatefulWidget {
@@ -22,6 +23,21 @@ class CustomFormState extends State<CustomForm> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _obscurePassword = true;
+
+  final _authService = AuthService();
+
+  void loginUser() async {
+    final result = await _authService.login(
+      emailController.text.trim(),
+      passwordController.text.trim(),
+    );
+
+    if (result == null) {
+      print("Login success!");
+    } else {
+      print("Login failed: $result");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
@@ -91,6 +107,7 @@ class CustomFormState extends State<CustomForm> {
                   onPressed: () {
                     // Validate returns true if the form is valid, or false otherwise.
                     if (_formKey.currentState!.validate()) {
+                      loginUser();
                       // If the form is valid, display a snackbar. In the real world,
                       // you'd often call a server or save the information in a database.
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -106,4 +123,7 @@ class CustomFormState extends State<CustomForm> {
       ),
     );
   }
+
+
+
 }
