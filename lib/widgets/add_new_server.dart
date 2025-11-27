@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:m2i_cours_flutter/api/channels_api.dart';
+import 'package:m2i_cours_flutter/models/channel_model.dart';
+import 'package:m2i_cours_flutter/screens/navigation/features/add_channel.dart';
 
 class AddNewChannelForm extends StatefulWidget {
   const AddNewChannelForm({super.key});
@@ -9,7 +12,9 @@ class AddNewChannelForm extends StatefulWidget {
 
 class _AddNewChannelFormState extends State<AddNewChannelForm> {
   final _formKey = GlobalKey<FormState>();
+  final channelApiService = ChannelServiceApi();
 
+  final TextEditingController name = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Form(
@@ -43,6 +48,7 @@ class _AddNewChannelFormState extends State<AddNewChannelForm> {
 
             const SizedBox(height: 20),
             TextFormField(
+              controller: name,
               decoration: const InputDecoration(
                 hintText: "Enter channel name",
                 border: OutlineInputBorder(),
@@ -60,13 +66,18 @@ class _AddNewChannelFormState extends State<AddNewChannelForm> {
             const SizedBox(height: 20),
 
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
+                 final response = await channelApiService.createServer(
+                    name.text,
+                  );
+
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
+                    SnackBar(content: Text(response)),
                   );
                 }
               },
+
               child: const Text('Done'),
             ),
           ],

@@ -34,77 +34,40 @@ class ChatsPage extends StatelessWidget {
       },
     ];
 
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 2,
-        title: Row(
-          children: [
-            // USER ICON + TEXT
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.blueAccent,
-                  child: Image.asset(
-                    'assets/user2.png',
-                    width: 150,
-                  ),
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  "Hi Prachi",
+      backgroundColor: const Color(0xFF0f172b),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(
+                  "Chats",
                   style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w500,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
                   ),
-                ),
-              ],
-            ),
-
-            const SizedBox(width: 12),
-
-            // SEARCH BAR (Flexible)
-            Expanded(
-              child: Container(
-                height: 38,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.search, color: Colors.grey),
-                    const SizedBox(width: 8),
-                    const Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Search",
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
-            ),
-          ],
-        ),
-      ),      body: ListView.builder(
-        itemCount: chats.length,
-        itemBuilder: (context, index) {
-          final chat = chats[index];
-          return ChatItem(
-            userName: chat['user'],
-            message: chat['message'],
-            time: chat['time'],
-            status: chat['status'],
-          );
-        },
-      ),
+              ListView.builder(
+                shrinkWrap: true, // prevent height issues
+                physics: NeverScrollableScrollPhysics(), // disable inner scroll
+                itemCount: chats.length,
+                itemBuilder: (context, index) {
+                  final chat = chats[index];
+                  return ChatItem(
+                    userName: chat['user'],
+                    message: chat['message'],
+                    time: chat['time'],
+                    status: chat['status'],
+                  );
+                },
+              ),
+            ],
+          ),
+        )
     );
   }
 }

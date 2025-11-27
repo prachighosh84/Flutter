@@ -23,7 +23,9 @@ class BottomNavBar extends StatelessWidget {
         children: [
           _buildNavItem(Icons.home, 'Home', 0),
           _buildNavItem(Icons.chat, 'Chats', 1),
-          _buildNavItem(Icons.person, 'Profile', 2),
+          _buildNavItem(Icons.tag, 'Channels', 2),
+
+          _buildNavItem(Icons.person, 'Profile', 3),
         ],
       ),
     );
@@ -46,14 +48,14 @@ class BottomNavBar extends StatelessWidget {
               duration: const Duration(milliseconds: 200),
               child: Icon(
                 icon,
-                color: isSelected ? Colors.blue : Colors.grey,
+                color: isSelected ? Color(0xff9b27af) : Color(0xff919090),
               ),
             ),
             const SizedBox(height: 4),
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Colors.blue : Colors.grey,
+                color: isSelected ? Color(0xff9b27af) : Color(0xff919090),
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                 fontSize: 12,
               ),

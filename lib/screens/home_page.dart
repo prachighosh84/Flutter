@@ -2,15 +2,35 @@ import 'package:flutter/material.dart';
 import 'package:m2i_cours_flutter/screens/channels.dart';
 import 'package:m2i_cours_flutter/screens/chats.dart';
 import 'package:m2i_cours_flutter/screens/profile.dart';
-import 'package:m2i_cours_flutter/screens/sign_in.dart';
 import 'package:m2i_cours_flutter/widgets/icon_card.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  State<HomePage> createState() => _HomePageState();
+}
 
+class _HomePageState extends State<HomePage> {
+  String? userDisplay = '';
+
+  @override
+  void initState() {
+    super.initState();
+    getUserSharedPref();
+  }
+
+  Future<void> getUserSharedPref() async {
+    final userPref = await SharedPreferences.getInstance();
+    final display = await userPref.getString('userDisplay');
+    setState(() {
+      userDisplay = display;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final List<Color> colors = [
       Colors.blue,
       Colors.green,
@@ -20,7 +40,6 @@ class HomePage extends StatelessWidget {
       Colors.teal,
     ];
 
-
     final List<Map<String, dynamic>> cardData = [
       {
         'title': 'Chats',
@@ -28,7 +47,6 @@ class HomePage extends StatelessWidget {
         'icon': Icons.chat,
         'page': const ChatsPage(),
       },
-
       {
         'title': 'Profile',
         'subtitle': 'View your profile',
@@ -43,110 +61,89 @@ class HomePage extends StatelessWidget {
       },
       {
         'title': 'Notifications',
-        'subtitle': 'View  notifications',
+        'subtitle': 'View notifications',
         'icon': Icons.notifications,
         'page': const ChannelsPage(),
       },
-
+      {
+        'title': 'Favourites',
+        'subtitle': 'Your Favorites',
+        'icon': Icons.settings,
+        'page': const ChannelsPage(),
+      },
+      {
+        'title': 'Settings',
+        'subtitle': 'Edit Settings',
+        'icon': Icons.settings,
+        'page': const ChannelsPage(),
+      },
     ];
 
-
     return Scaffold(
-      backgroundColor: Color(0xFF0f172b),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 2,
-        title: Row(
-          children: [
-            // USER ICON + TEXT
-            Row(
-              children: [
-                CircleAvatar(
-                  radius: 16,
-                  backgroundColor: Colors.blueAccent,
-                  child:    Image.asset(
-                    'assets/user2.png',
-                    width: 150,
+      backgroundColor: const Color(0xFF0f172b),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.only(bottom: 8), // prevent tiny overflow
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  "Welcome $userDisplay",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
                   ),
-                ),
-                const SizedBox(width: 8),
-                const Text(
-                  "Hi Prachi",
-                  style: TextStyle(
-                    fontSize: 15,
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(width: 12),
-
-            // SEARCH BAR (Flexible)
-            Expanded(
-              child: Container(
-                height: 38,
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(25),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.search, color: Colors.grey),
-                    const SizedBox(width: 8),
-                    const Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "Search",
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ],
                 ),
               ),
-            ),
-            ElevatedButton(
-              child: const Text('Sign In'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute<void>(
-                    builder: (context) =>  SignInPage(),
+              const SizedBox(height: 8),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: const Text(
+                  "Here's a summary of your activity!",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
                   ),
-                );
-              },
-            ),
-
-          ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: cardData.length,
+                  gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                    childAspectRatio: 1.5,
+                  ),
+                  itemBuilder: (context, index) {
+                    final data = cardData[index];
+                    return IconCard(
+                      icon: data['icon'],
+                      title: data['title'],
+                      subtitle: data['subtitle'],
+                      color: colors[index % colors.length],
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => data['page']),
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-
-      body: GridView.builder(
-        padding: const EdgeInsets.all(12),
-        itemCount: cardData.length,
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          mainAxisSpacing: 12,
-          childAspectRatio: 3 / 2,
-        ),
-        itemBuilder: (context, index) {
-          final data = cardData[index];
-          return IconCard(
-            icon: data['icon'],
-            title: data['title'],
-            subtitle: data['subtitle'],
-            color: colors[index % colors.length],
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => data['page']),
-              );
-            },
-          );
-        },
       ),
     );
   }

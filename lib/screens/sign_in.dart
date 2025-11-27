@@ -11,11 +11,25 @@ class SignInPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffddceec),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text("Sign In"),
+        title: const Text("Lets Chat App"),
       ),
-      body: const CustomForm(),
+      body: Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
+              'assets/intro.png',
+              //width: 150,
+            ),
+            const CustomForm(),
+
+          ],
+        ),
+      )
+
+
     );
   }
 

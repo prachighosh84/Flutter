@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'navigation/main_nav.dart';
+import 'auth_user.dart';
 
 
 class IndexPage extends StatelessWidget {
@@ -13,7 +13,7 @@ class IndexPage extends StatelessWidget {
           onTap: () {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => MainNav()),
+              MaterialPageRoute(builder: (context) => AuthGate()),
             );
           },
           child: Column(

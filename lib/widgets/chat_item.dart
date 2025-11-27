@@ -32,7 +32,7 @@ class ChatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return  ListTile(
       leading: Stack(
         children: [
           CircleAvatar(
@@ -59,19 +59,23 @@ class ChatItem extends StatelessWidget {
       ),
       title: Text(
         userName,
-        style: const TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+          color: Color(0xffd5d5d5),
+        ),
       ),
       subtitle: Text(
         message,
+        style: const TextStyle(color: Colors.white),
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
       trailing: Text(
         time,
-        style: const TextStyle(fontSize: 12, color: Colors.grey),
+        style: const TextStyle(fontSize: 12, color: Colors.white60),
       ),
       onTap: () {
-        // Optional: navigate to chat detail page
+        // Navigate to chat detail page
       },
     );
   }

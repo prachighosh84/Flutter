@@ -21,4 +21,30 @@ class ChannelServiceApi {
     }
   }
 
+
+  Future<String> createServer(String name) async {
+    final url = Uri.parse("https://us-central1-messaging-backend-m2i.cloudfunctions.net/api/servers");
+
+    final body = jsonEncode({
+      "name": name,
+      "ownerId": "53Fphd4xy9bRzfVUUqzG10tZqej1",
+    });
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
+
+    print("Status: ${response.statusCode}");
+    print("Body: ${response.body}");
+
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return "Server Created Successfully!";
+    } else {
+      return "Error: ${response.body}";
+    }
+  }
+
+
 }
