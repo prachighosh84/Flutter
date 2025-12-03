@@ -23,9 +23,7 @@ class BottomNavBar extends StatelessWidget {
         children: [
           _buildNavItem(Icons.home, 'Home', 0),
           _buildNavItem(Icons.chat, 'Chats', 1),
-          _buildNavItem(Icons.tag, 'Channels', 2),
-
-          _buildNavItem(Icons.person, 'Profile', 3),
+          _buildNavItem(Icons.person, 'Profile', 2),
         ],
       ),
     );

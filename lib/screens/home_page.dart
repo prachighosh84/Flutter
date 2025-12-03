@@ -15,10 +15,14 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String? userDisplay = '';
 
+
+
   @override
   void initState() {
     super.initState();
     getUserSharedPref();
+
+
   }
 
   Future<void> getUserSharedPref() async {
@@ -57,25 +61,25 @@ class _HomePageState extends State<HomePage> {
         'title': 'Channels',
         'subtitle': 'View your Channels',
         'icon': Icons.tag,
-        'page': const ChannelsPage(),
+        'page': const ChatsPage(),
       },
       {
         'title': 'Notifications',
         'subtitle': 'View notifications',
         'icon': Icons.notifications,
-        'page': const ChannelsPage(),
+        'page': const ChatsPage(),
       },
       {
         'title': 'Favourites',
         'subtitle': 'Your Favorites',
         'icon': Icons.settings,
-        'page': const ChannelsPage(),
+        'page': const ChatsPage(),
       },
       {
         'title': 'Settings',
         'subtitle': 'Edit Settings',
         'icon': Icons.settings,
-        'page': const ChannelsPage(),
+        'page': const ChatsPage(),
       },
     ];
 
@@ -83,7 +87,8 @@ class _HomePageState extends State<HomePage> {
       backgroundColor: const Color(0xFF0f172b),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.only(bottom: 8), // prevent tiny overflow
+          padding: const EdgeInsets.only(bottom: 8), // pre
+          // vent tiny overflow
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

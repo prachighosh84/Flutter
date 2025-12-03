@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:m2i_cours_flutter/api/channels_api.dart';
-import 'package:m2i_cours_flutter/models/channel_model.dart';
-import 'package:m2i_cours_flutter/screens/navigation/features/add_channel.dart';
+import 'package:m2i_cours_flutter/api/server_api.dart';
 
-class AddNewChannelForm extends StatefulWidget {
-  const AddNewChannelForm({super.key});
+
+class AddNewServerForm extends StatefulWidget {
+  const AddNewServerForm({super.key});
 
   @override
-  State<AddNewChannelForm> createState() => _AddNewChannelFormState();
+  State<AddNewServerForm> createState() => _AddNewServerFormState();
 }
 
-class _AddNewChannelFormState extends State<AddNewChannelForm> {
+class _AddNewServerFormState extends State<AddNewServerForm> {
   final _formKey = GlobalKey<FormState>();
-  final channelApiService = ChannelServiceApi();
+  final channelApiService = ServerServiceApi();
 
   final TextEditingController name = TextEditingController();
   @override
@@ -50,7 +49,7 @@ class _AddNewChannelFormState extends State<AddNewChannelForm> {
             TextFormField(
               controller: name,
               decoration: const InputDecoration(
-                hintText: "Enter channel name",
+                hintText: "Enter Server name",
                 border: OutlineInputBorder(),
                 filled: true,
                 fillColor: Colors.white,

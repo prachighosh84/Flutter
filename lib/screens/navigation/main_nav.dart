@@ -1,20 +1,24 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:m2i_cours_flutter/api/server_api.dart';
+import 'package:m2i_cours_flutter/models/server_model.dart';
+import 'package:m2i_cours_flutter/providers/server_provider.dart';
+import 'package:m2i_cours_flutter/providers/user_provider.dart';
 import 'package:m2i_cours_flutter/screens/channels.dart';
 import 'package:m2i_cours_flutter/screens/home_page.dart';
 import 'package:m2i_cours_flutter/screens/chats.dart';
+import 'package:m2i_cours_flutter/screens/navigation/features/add_server.dart';
 import 'package:m2i_cours_flutter/screens/profile.dart';
 import 'package:m2i_cours_flutter/widgets/bottom_nav_bar.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../sign_in.dart';
 
 class MainNav extends StatefulWidget {
   final int initialIndex;
-  final String? username;
-  final String? email;
 
 
-  MainNav({int? initialIndex,required this.username, required this.email, Key? key})
+  MainNav({int? initialIndex, Key? key})
       : initialIndex = initialIndex ?? 0,
         super(key: key);
 
@@ -25,13 +29,18 @@ class MainNav extends StatefulWidget {
 class _MainNavState extends State<MainNav> {
   int currentIndex = 0;
   String? userDisplay ='';
+  late Future<List<Server>> serverList;
 
+  late List<Server> servers ;
+
+  int serverCount = 0;
+  final serverApiService = ServerServiceApi();
 
   final List<Widget> pages = [
     HomePage(),   // Page  0
     ChatsPage(),  // Page 1
-    ChannelsPage(), // Page 2
-    ProfilePage() // Page 3
+   // ChannelsPage(), // Page 2
+    ProfilePage() // Page 2
   ];
 
   @override
@@ -40,7 +49,13 @@ class _MainNavState extends State<MainNav> {
     currentIndex = (widget.initialIndex >= 0 && widget.initialIndex < pages.length)
         ? widget.initialIndex
         : 0;
-    getUserSharedPref();
+    serverList = serverApiService.fetchServers().then((servers) {
+      setState(() {
+        serverCount = servers.length;  // updated when data arrives
+      });
+      return servers;
+    });
+
   }
 
   void onTabSelected(int index) {
@@ -50,20 +65,27 @@ class _MainNavState extends State<MainNav> {
   }
 
 
-  Future<void> getUserSharedPref() async {
-    final userPref = await SharedPreferences.getInstance();
-   final display =  await userPref.getString('userDisplay');
-   setState(() {
-     userDisplay = display;
-   });
-  }
+
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+    final user = userProvider.user;
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 2,
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        ),
         title: Row(
           children: [
             Stack(
@@ -127,7 +149,7 @@ class _MainNavState extends State<MainNav> {
 
             GestureDetector(
               onTap: ()async {
-                if(widget.email == null){
+                if(user?.userEmail == null){
                   Navigator.push(
                     context,
                     MaterialPageRoute<void>(
@@ -149,7 +171,7 @@ class _MainNavState extends State<MainNav> {
                 children: [
                   Icon(Icons.exit_to_app, color: Color(0xFF0f172b)),
                   Text(
-                    widget.email == null?'SignIn':'Logout',
+                    user?.userEmail == null?'SignIn':'Logout',
                     style: TextStyle(color: Color(0xFF0f172b),
                       fontSize: 10,
                       fontWeight: FontWeight.w600,
@@ -167,6 +189,95 @@ class _MainNavState extends State<MainNav> {
         index: currentIndex,
         children: pages,
       ),
+      drawer: Drawer(
+        child: SafeArea(
+          child: Column(
+            children: [
+              // ---------- Drawer Header ----------
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Color(0xFF0f172b),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                        children: [
+                           CircleAvatar(
+                           radius: 28,
+                           backgroundColor: Colors.white,
+                           child: Icon(Icons.network_ping, size: 30, color: Color(0xFF0f172b)),
+                ),
+                SizedBox(width: 12),
+                Text(
+                  "Servers ($serverCount)",
+                  style: TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              ]
+          ),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (context) =>  AddNewServer(),
+                ),
+              );
+            },
+            child: Icon(Icons.add, color: Colors.white,)
+            ,
+          ),
+        ],
+      ),
+
+              ),
+              // ---------- Server List ----------
+              Expanded(
+                child: FutureBuilder<List<Server>>(
+                  future: serverList,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(child: CircularProgressIndicator());
+                    } else if (snapshot.hasError) {
+                      return Center(child: Text("Error: ${snapshot.error}"));
+                    } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                      return Center(child: Text("No servers available"));
+                    }
+
+                    final servers = snapshot.data!;
+                    Provider.of<ServerProvider>(context).setServers(servers);
+                    return ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: servers.length,
+                      itemBuilder: (context, index) {
+                        final server = servers[index];
+                        return ListTile(
+                          leading: Icon(Icons.tag, color: Colors.black87),
+                          title: Text(server.name),
+                          onTap: () {
+                            //Provider.of<ServerProvider>(context).setSelectedServer(server);
+                            //final serverFromProvider = Provider.of<ServerProvider>(context);
+                            //final selectedServerFromProvider = serverFromProvider.selectedServer;
+                            print("Server ID : ${server.id}");
+                            //print("selected server from provider: $selectedServerFromProvider");
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(builder: (_) => ChannelsPage(server.id, server.name)),
+                            );
+                            // TODO navigate to server screen
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+
+
       bottomNavigationBar: BottomNavBar(
         currentIndex: currentIndex,
         onTap: onTabSelected,

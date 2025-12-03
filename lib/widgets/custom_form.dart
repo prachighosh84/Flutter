@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:m2i_cours_flutter/screens/auth_user.dart';
+import 'package:m2i_cours_flutter/screens/navigation/main_nav.dart';
 import '../services/auth_service.dart';
 
 // Define a custom Form widget.
@@ -47,7 +49,6 @@ class CustomFormState extends State<CustomForm> {
         color: Color(0xFF0f172b),
         borderRadius: BorderRadius.circular(2),
         ),
-
 
         child: Form(
           key: _formKey,
@@ -149,6 +150,13 @@ class CustomFormState extends State<CustomForm> {
                                 // you'd often call a server or save the information in a database.
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(content: Text('Processing Data')),
+                                );
+
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AuthGate(), // replace NextPage() with your target widget
+                                  ),
                                 );
                               }
                             },
