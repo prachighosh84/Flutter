@@ -245,7 +245,6 @@ class _MainNavState extends State<MainNav> {
                     }
 
                     final servers = snapshot.data!;
-                    Provider.of<ServerProvider>(context).setServers(servers);
                     return ListView.builder(
                       padding: EdgeInsets.zero,
                       itemCount: servers.length,
@@ -255,16 +254,12 @@ class _MainNavState extends State<MainNav> {
                           leading: Icon(Icons.tag, color: Colors.black87),
                           title: Text(server.name),
                           onTap: () {
-                            //Provider.of<ServerProvider>(context).setSelectedServer(server);
-                            //final serverFromProvider = Provider.of<ServerProvider>(context);
-                            //final selectedServerFromProvider = serverFromProvider.selectedServer;
-                            print("Server ID : ${server.id}");
-                            //print("selected server from provider: $selectedServerFromProvider");
+                           context.read<ServerProvider>().setSelectedServer(server);
+                           print("Server ID : ${server.id}");
                             Navigator.push(
                               context,
-                              MaterialPageRoute(builder: (_) => ChannelsPage(server.id, server.name)),
+                              MaterialPageRoute(builder: (_) => ChannelsPage()),
                             );
-                            // TODO navigate to server screen
                           },
                         );
                       },

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:m2i_cours_flutter/models/channel_model.dart';
 import 'package:m2i_cours_flutter/api/channels_api.dart';
+import 'package:m2i_cours_flutter/providers/server_provider.dart';
 import 'package:m2i_cours_flutter/screens/navigation/features/add_channel.dart';
 import 'package:m2i_cours_flutter/widgets/add_new_channel.dart';
+import 'package:provider/provider.dart';
 
 class ChannelsPage extends StatefulWidget {
 
- final  String serverId;
- final  String serverName;
-
- const ChannelsPage(this.serverId,this.serverName, {super.key});
+ const ChannelsPage( {super.key});
 
   @override
   State<ChannelsPage> createState() => _ChannelsPageState();
@@ -18,14 +17,17 @@ class ChannelsPage extends StatefulWidget {
 class _ChannelsPageState extends State<ChannelsPage> {
   late Future<List<Channel>> channelsList;
   final channelApiService = ChannelServiceApi();
-
+  late var serverId = "";
 
 
   @override
   void initState() {
     super.initState();
-    print('serverid: ${widget.serverId}');
-    channelsList = channelApiService.fetchChannels(widget.serverId); // call API
+    final selectedServer =  context.read<ServerProvider>().selectedServer;
+    serverId = selectedServer!.id;
+    print("selectedServerID------------- $serverId");
+
+    channelsList = channelApiService.fetchChannels(serverId); // call API
   }
 
   @override
@@ -45,12 +47,12 @@ class _ChannelsPageState extends State<ChannelsPage> {
           IconButton(
             icon: Icon(Icons.add, color: Colors.white,),
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute<void>(
-                  builder: (context) =>  AddNewChannel(widget.serverId, widget.serverName),
-                ),
-              );
+             // Navigator.push(
+               // context,
+               // MaterialPageRoute<void>(
+                 // builder: (context) =>  AddNewChannel(widget.serverId, widget.serverName),
+                //),
+              //);
             },
           ),
         ],

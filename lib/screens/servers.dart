@@ -129,7 +129,6 @@ class _ChannelsPageState extends State<ChannelsPage> {
                           ),
                         ) ,
                         onTap: () {
-                          // TODO: Navigate to chat screen
                         },
                       );
                     },
