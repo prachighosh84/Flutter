@@ -14,20 +14,32 @@ class ChatsPage extends StatefulWidget {
 
 class _ChatsPageState extends State<ChatsPage> {
 
-  late Future<List<Message>> messagesList;
+  Future<List<Message>>? messagesList;
   final messageApiService = ChatsServiceApi();
 
   @override
   void initState() {
     super.initState();
+
     final selectedChannel = context.read<ChannelProvider>().selectedChannel;
-    final channelId = selectedChannel!.id;
+
+    // ✅ FIX: Prevent crash if no channel is selected
+    if (selectedChannel == null) {
+      print("⚠ ChatsPage opened before selecting a channel.");
+      messagesList = null;
+      return;
+    }
+
+    final channelId = selectedChannel.id;
     print("channel id for message: $channelId");
+
     messagesList = messageApiService.fetchMessages(channelId);
   }
 
   @override
   Widget build(BuildContext context) {
+
+    final selectedChannel = context.watch<ChannelProvider>().selectedChannel;
 
     return Scaffold(
       backgroundColor: const Color(0xFF0f172b),
@@ -39,8 +51,8 @@ class _ChatsPageState extends State<ChatsPage> {
           Padding(
             padding: const EdgeInsets.all(16.0),
             child: Text(
-              "Chats",
-              style: TextStyle(
+              selectedChannel?.name ?? "Chats",
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
@@ -48,59 +60,76 @@ class _ChatsPageState extends State<ChatsPage> {
             ),
           ),
 
-          // MAIN CONTENT → Expanded so it fills remaining space
-          Expanded(
-            child: FutureBuilder<List<Message>>(
-              future: messagesList,
-              builder: (context, snapshot) {
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
-
-                if (snapshot.hasError) {
-                  return Center(
-                    child: Text(
-                      'Error: ${snapshot.error}',
-                      style: TextStyle(color: Colors.white70),
+          // If no channel is selected → show placeholder
+          if (selectedChannel == null)
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset("assets/nochannels.png", width: 160),
+                    const SizedBox(height: 20),
+                    const Text(
+                      "Select a channel to view messages",
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
                     ),
-                  );
-                }
+                  ],
+                ),
+              ),
+            )
+          else
+            Expanded(
+              child: FutureBuilder<List<Message>>(
+                future: messagesList,
+                builder: (context, snapshot) {
 
-                if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.all(40),
-                        child: Image.asset('assets/nochannels.png'),
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle(color: Colors.white70),
                       ),
-                      Text(
-                        'No messages available',
-                        style: TextStyle(color: Colors.white70),
-                      )
-                    ],
-                  );
-                }
-
-                // MESSAGES LIST
-                final messages = snapshot.data!;
-                return ListView.builder(
-                  itemCount: messages.length,
-                  itemBuilder: (context, index) {
-                    final message = messages[index];
-                    return ChatItem(
-                      userName: message.authorName,
-                      message: message.content,
-                      time: message.createdAt,
-                      status: UserStatus.online,
-                      avatarUrl: message.authorAvatarUrl,
                     );
-                  },
-                );
-              },
+                  }
+
+                  if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Image.asset("assets/nochannels.png", width: 160),
+                          const SizedBox(height: 20),
+                          const Text(
+                            "No messages in this channel yet",
+                            style: TextStyle(color: Colors.white70),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  // MESSAGES LIST
+                  final messages = snapshot.data!;
+                  return ListView.builder(
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[index];
+                      return ChatItem(
+                        userName: message.authorName,
+                        message: message.content,
+                        time: message.createdAt,
+                        status: UserStatus.online,
+                        avatarUrl: message.authorAvatarUrl,
+                      );
+                    },
+                  );
+                },
+              ),
             ),
-          )
         ],
       ),
     );

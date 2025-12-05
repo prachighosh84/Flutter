@@ -56,7 +56,6 @@ class _MainNavState extends State<MainNav> {
       });
       return servers;
     });
-
   }
 
   void onTabSelected(int index) {

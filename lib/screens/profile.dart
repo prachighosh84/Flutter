@@ -14,7 +14,6 @@ class ProfilePage extends StatelessWidget {
                 radius: 16,
                 backgroundColor: Colors.blueAccent,
                 child:    Image.asset('assets/user2.png',
-
                 ),
               ),
             ],
