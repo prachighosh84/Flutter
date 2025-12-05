@@ -1,15 +1,13 @@
 import 'dart:convert';
-import 'package:m2i_cours_flutter/api/api_urls.dart';
-
-import '../models/channel_model.dart';
 import 'package:http/http.dart' as http;
+import '../models/message_model.dart';
+import 'api_urls.dart';
 
-class ChannelServiceApi {
-
+class ChatsServiceApi {
   final baseUrl = ApiUrls.baseUrl;
-  Future<List<Channel>> fetchChannels(String serverId) async {
+  Future<List<Message>> fetchMessages(String channelId) async {
     final url = Uri.parse(
-      '$baseUrl/servers/$serverId/channels',
+      '$baseUrl/channels/$channelId/messages',
     );
 
     final response = await http.get(
@@ -17,13 +15,14 @@ class ChannelServiceApi {
       headers: {'Content-Type': 'application/json'},
     );
 
+    print("messages-----: ${response.body}");
 
     if (response.statusCode == 200) {
       // RESPONSE IS A LIST, NOT A MAP
       final List<dynamic> list = jsonDecode(response.body);
 
       return list
-          .map((json) => Channel.fromJson(json as Map<String, dynamic>))
+          .map((json) => Message.fromJson(json as Map<String, dynamic>))
           .toList();
     } else {
       throw Exception('Failed to fetch channels: ${response.statusCode}');
@@ -31,9 +30,9 @@ class ChannelServiceApi {
   }
 
 
-  Future<String> createChannel(String name, String serverId) async {
+  Future<String> createMessage(String name, String channelId) async {
     final url = Uri.parse(
-      "$baseUrl/servers/$serverId/channels",
+      "$baseUrl/channels/$channelId/messages",
     );
 
     print('url: $url');
@@ -47,17 +46,14 @@ class ChannelServiceApi {
       url,
       headers: {"Content-Type": "application/json"},
       body: body,
-
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
       return response.body;
     } else {
       throw Exception(
-        "Failed to create channel: ${response.statusCode} - ${response.body}",
+        "Failed to create message: ${response.statusCode} - ${response.body}",
       );
     }
   }
-
-
 }

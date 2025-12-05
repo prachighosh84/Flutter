@@ -10,6 +10,9 @@ class ServerServiceApi {
   Future<List<Server>> fetchServers() async {
     final baseUrl = ApiUrls.baseUrl;
     final url = Uri.parse('$baseUrl/servers?userId=53Fphd4xy9bRzfVUUqzG10tZqej1');
+
+
+
     final response = await http.get(url, headers: {'Content-Type': 'application/json'});
     if (response.statusCode == 200) {
       final Map<String, dynamic> decoded = jsonDecode(response.body);
@@ -43,4 +46,27 @@ class ServerServiceApi {
   }
 
 
+  Future<String> generateInviteLink(String serverId) async {
+    final baseUrl = ApiUrls.baseUrl;
+
+    final url = Uri.parse('$baseUrl/servers/$serverId/invite');
+
+    final body = jsonEncode({
+      "serverId": serverId,
+      "inviterId": "53Fphd4xy9bRzfVUUqzG10tZqej1",
+    });
+
+    final response = await http.post(
+      url,
+      headers: {"Content-Type": "application/json"},
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data["inviteLink"] ?? "No invite link returned";
+    } else {
+      throw Exception("Failed to generate invite link: ${response.body}");
+    }
+  }
 }

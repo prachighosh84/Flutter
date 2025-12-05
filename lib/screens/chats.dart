@@ -1,73 +1,108 @@
 import 'package:flutter/material.dart';
+import 'package:m2i_cours_flutter/api/chats_api.dart';
+import 'package:m2i_cours_flutter/models/message_model.dart';
+import 'package:m2i_cours_flutter/providers/channel_provider.dart';
 import 'package:m2i_cours_flutter/widgets/chat_item.dart';
+import 'package:provider/provider.dart';
 
-class ChatsPage extends StatelessWidget {
+class ChatsPage extends StatefulWidget {
   const ChatsPage({super.key});
+
+  @override
+  State<ChatsPage> createState() => _ChatsPageState();
+}
+
+class _ChatsPageState extends State<ChatsPage> {
+
+  late Future<List<Message>> messagesList;
+  final messageApiService = ChatsServiceApi();
+
+  @override
+  void initState() {
+    super.initState();
+    final selectedChannel = context.read<ChannelProvider>().selectedChannel;
+    final channelId = selectedChannel!.id;
+    print("channel id for message: $channelId");
+    messagesList = messageApiService.fetchMessages(channelId);
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    final List<Map<String, dynamic>> chats = [
-      {
-        'user': 'Alice',
-        'message': 'Hey! Are you coming today?',
-        'time': '10:45 AM',
-        'status': UserStatus.online
-      },
-      {
-        'user': 'Bob',
-        'message': 'Sure, see you there.',
-        'time': '09:30 AM',
-        'status': UserStatus.away
-      },
-      {
-        'user': 'Charlie',
-        'message': 'Can you send me the report?',
-        'time': 'Yesterday',
-        'status': UserStatus.offline
-      },
-      {
-        'user': 'Diana',
-        'message': 'Happy Birthday! 🎉',
-        'time': 'Yesterday',
-        'status': UserStatus.online
-      },
-    ];
-
     return Scaffold(
       backgroundColor: const Color(0xFF0f172b),
-        body: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  "Chats",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+          // HEADER
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              "Chats",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
               ),
-              ListView.builder(
-                shrinkWrap: true, // prevent height issues
-                physics: NeverScrollableScrollPhysics(), // disable inner scroll
-                itemCount: chats.length,
-                itemBuilder: (context, index) {
-                  final chat = chats[index];
-                  return ChatItem(
-                    userName: chat['user'],
-                    message: chat['message'],
-                    time: chat['time'],
-                    status: chat['status'],
-                  );
-                },
-              ),
-            ],
+            ),
           ),
-        )
+
+          // MAIN CONTENT → Expanded so it fills remaining space
+          Expanded(
+            child: FutureBuilder<List<Message>>(
+              future: messagesList,
+              builder: (context, snapshot) {
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Error: ${snapshot.error}',
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  );
+                }
+
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(40),
+                        child: Image.asset('assets/nochannels.png'),
+                      ),
+                      Text(
+                        'No messages available',
+                        style: TextStyle(color: Colors.white70),
+                      )
+                    ],
+                  );
+                }
+
+                // MESSAGES LIST
+                final messages = snapshot.data!;
+                return ListView.builder(
+                  itemCount: messages.length,
+                  itemBuilder: (context, index) {
+                    final message = messages[index];
+                    return ChatItem(
+                      userName: message.authorName,
+                      message: message.content,
+                      time: message.createdAt,
+                      status: UserStatus.online,
+                      avatarUrl: message.authorAvatarUrl,
+                    );
+                  },
+                );
+              },
+            ),
+          )
+        ],
+      ),
     );
   }
 }

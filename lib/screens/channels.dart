@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:m2i_cours_flutter/models/channel_model.dart';
 import 'package:m2i_cours_flutter/api/channels_api.dart';
 import 'package:m2i_cours_flutter/providers/server_provider.dart';
+import 'package:m2i_cours_flutter/providers/channel_provider.dart';
+import 'package:m2i_cours_flutter/screens/chats.dart';
 import 'package:m2i_cours_flutter/screens/navigation/features/add_channel.dart';
-import 'package:m2i_cours_flutter/widgets/add_new_channel.dart';
 import 'package:provider/provider.dart';
 
 class ChannelsPage extends StatefulWidget {
@@ -18,6 +19,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
   late Future<List<Channel>> channelsList;
   final channelApiService = ChannelServiceApi();
   late var serverId = "";
+  late var serverName = "";
 
 
   @override
@@ -25,8 +27,7 @@ class _ChannelsPageState extends State<ChannelsPage> {
     super.initState();
     final selectedServer =  context.read<ServerProvider>().selectedServer;
     serverId = selectedServer!.id;
-    print("selectedServerID------------- $serverId");
-
+    serverName = selectedServer.name;
     channelsList = channelApiService.fetchChannels(serverId); // call API
   }
 
@@ -47,18 +48,19 @@ class _ChannelsPageState extends State<ChannelsPage> {
           IconButton(
             icon: Icon(Icons.add, color: Colors.white,),
             onPressed: () {
-             // Navigator.push(
-               // context,
-               // MaterialPageRoute<void>(
-                 // builder: (context) =>  AddNewChannel(widget.serverId, widget.serverName),
-                //),
-              //);
+              Navigator.push(
+                context,
+                MaterialPageRoute<void>(
+                  builder: (context) =>  AddNewChannel(),
+                ),
+              );
             },
           ),
         ],
       ),
       body: Column(
         children: [
+          Text("Server Name: ${serverName}", style: TextStyle(color: Colors.white70),),
           Expanded(
             child: FutureBuilder<List<Channel>>(
               future: channelsList,
@@ -106,6 +108,18 @@ class _ChannelsPageState extends State<ChannelsPage> {
                               ),
                             ) ,
                             onTap: () {
+                              context.read<ChannelProvider>().setSelectedChannel(channel);
+                              final selectedChannel = context.read<ChannelProvider>().selectedChannel;
+                              print("selected channel name: ${selectedChannel?.name}");
+
+                              print("selected channel id: ${selectedChannel?.id}");
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute<void>(
+                                  builder: (context) =>  ChatsPage(),
+                                ),
+                              );
                               // TODO: Navigate to chat screen
                             },
                           );

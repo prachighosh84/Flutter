@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:m2i_cours_flutter/api/server_api.dart';
 import 'package:m2i_cours_flutter/models/server_model.dart';
 import 'package:m2i_cours_flutter/providers/server_provider.dart';
@@ -250,18 +251,63 @@ class _MainNavState extends State<MainNav> {
                       itemCount: servers.length,
                       itemBuilder: (context, index) {
                         final server = servers[index];
+
                         return ListTile(
                           leading: Icon(Icons.tag, color: Colors.black87),
                           title: Text(server.name),
+
+                          trailing: IconButton(
+                            icon: Icon(Icons.share, color: Colors.black87),
+                            onPressed: () async {
+                              final service = ServerServiceApi();
+                              print("serverId using invite link: ${server.id}");
+                              try {
+                                final inviteLink = await service.generateInviteLink(server.id);
+
+                                showDialog(
+                                  context: context,
+                                  builder: (_) => AlertDialog(
+                                    title: Text("Invite Link"),
+                                    content: SelectableText(inviteLink),
+                                    actions: [
+                                      TextButton(
+                                        child: Text("Copy"),
+                                        onPressed: () async {
+                                          await Clipboard.setData(ClipboardData(text: inviteLink));
+                                          Navigator.pop(context);
+
+                                          // Optional: Show a snackbar confirming copy
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(content: Text("Link copied to clipboard")),
+                                          );
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text("Close"),
+                                        onPressed: () => Navigator.pop(context),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                              } catch (e) {
+                                print("Error: $e");
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text("Failed to generate invite link")),
+                                );
+                              }
+                            },
+                          ),
+
                           onTap: () {
-                           context.read<ServerProvider>().setSelectedServer(server);
-                           print("Server ID : ${server.id}");
+                            context.read<ServerProvider>().setSelectedServer(server);
                             Navigator.push(
                               context,
                               MaterialPageRoute(builder: (_) => ChannelsPage()),
                             );
                           },
                         );
+
                       },
                     );
                   },

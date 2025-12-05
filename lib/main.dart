@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:m2i_cours_flutter/providers/channel_provider.dart';
 import 'package:m2i_cours_flutter/providers/server_provider.dart';
 import 'package:m2i_cours_flutter/providers/user_provider.dart';
 import 'package:m2i_cours_flutter/screens/index.dart';
@@ -18,7 +19,8 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => ServerProvider())
+        ChangeNotifierProvider(create: (_) => ServerProvider()),
+        ChangeNotifierProvider(create: (_) => ChannelProvider()),
       ],
       child: MyApp(),
     ),

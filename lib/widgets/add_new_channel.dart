@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:m2i_cours_flutter/api/channels_api.dart';
 import 'package:m2i_cours_flutter/api/server_api.dart';
+import 'package:provider/provider.dart';
+
+import '../providers/server_provider.dart';
 
 
 class AddNewChannelForm extends StatefulWidget {
-  final serverId;
-  final serverName;
 
-  const AddNewChannelForm(this.serverId,this.serverName, {super.key});
+
+  const AddNewChannelForm( {super.key});
 
   @override
   State<AddNewChannelForm> createState() => _AddNewChannelFormState();
@@ -20,6 +22,12 @@ class _AddNewChannelFormState extends State<AddNewChannelForm> {
   final TextEditingController name = TextEditingController();
   @override
   Widget build(BuildContext context) {
+
+    final selectedServer =  context.read<ServerProvider>().selectedServer;
+    final serverId = selectedServer!.id;
+    final serverName = selectedServer.name;
+    print("server name : $serverName");
+
     return Form(
       key: _formKey,
       child: Container(
@@ -28,7 +36,7 @@ class _AddNewChannelFormState extends State<AddNewChannelForm> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Text("Server Name: ${widget.serverName}", style: TextStyle(color: Colors.white70),),
+            Text("Server Name: ${serverName}", style: TextStyle(color: Colors.white70),),
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(32.0),
@@ -85,7 +93,7 @@ class _AddNewChannelFormState extends State<AddNewChannelForm> {
                     if (_formKey.currentState!.validate()) {
                       final response = await channelApiService.createChannel(
                           name.text,
-                          widget.serverId
+                          serverId
                       );
 
                       ScaffoldMessenger.of(context).showSnackBar(

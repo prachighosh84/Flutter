@@ -12,13 +12,13 @@ class ChannelsPage extends StatefulWidget {
 }
 
 class _ChannelsPageState extends State<ChannelsPage> {
-  late Future<List<Server>> channelsList;
+  late Future<List<Server>> serversList;
   final serverApiService = ServerServiceApi();
 
   @override
   void initState() {
     super.initState();
-    channelsList = serverApiService.fetchServers(); // call API
+    serversList = serverApiService.fetchServers(); // call API
   }
 
   @override
@@ -98,14 +98,14 @@ class _ChannelsPageState extends State<ChannelsPage> {
 
           Expanded(
             child: FutureBuilder<List<Server>>(
-              future: channelsList,
+              future: serversList,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
                 } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                  return Center(child: Text('No channels available'));
+                  return Center(child: Text('No servers available'));
                 } else {
                   final channels = snapshot.data!;
                   return ListView.builder(
